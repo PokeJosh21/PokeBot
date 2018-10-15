@@ -1,15 +1,10 @@
-# A Bot Template
+# PokemonBot
 
-A basic template for a discord bot using discord.js
+A Discord bot simulating that of the Gen 4 Pokemon games
 
 Requirements:
 
 Node.js
 In terminal, in the bot directory, type:
 npm install discord.js -save
-First, create a file named 'auth.json' and inside put: 
-{ 
-	"token": "YOUR TOKEN HERE" 
-}
-
-To run the bot, from terminal type "node bot.js" from the bot directory
+First, create a file named 'auth.json' and inside put: { "token": "YOUR TOKEN HERE" }
