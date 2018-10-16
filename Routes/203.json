@@ -1,8 +1,14 @@
 {
-	"pokemon": [["Zubat", "Poison", "Flying"],
-		          ["Abra", "Phychic", "None"],
-		          ["Starly", "Normal", "Flying"],
-              ["Bidoof", "Normal", "None"],
-              ["Kricketot", "Bug", "None"],
-              ["Shinx", "Electric", "None"]]
+	"pokemon": ["Zubat",
+  	            "Abra",
+ 	            "Starly",
+              	    "Bidoof",
+              	    "Kricketot",
+              	    "Shinx",
+		    "Psyduck",
+		    "Golduck",
+		    "Magikarp",
+		    "Goldeen",
+		    "Seaking",
+		    "Gyarados"]
 }
