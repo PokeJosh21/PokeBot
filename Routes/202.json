@@ -1,5 +1,6 @@
 {
 	"pokemon": [["Starly", "Normal", "Flying"],
-		          ["Kricketot", "Bug", "None"],
-		          ["Shinx", "Electric", "None"]]
+		    ["Kricketot", "Bug", "None"],
+		    ["Shinx", "Electric", "None"]
+		    ["Bidoof", "Normal", "None"]]
 }
