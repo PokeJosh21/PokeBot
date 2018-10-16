@@ -1,0 +1,8 @@
+{
+	"pokemon": [["Zubat", "Poison", "Flying"],
+		          ["Abra", "Phychic", "None"],
+		          ["Starly", "Normal", "Flying"],
+              ["Bidoof", "Normal", "None"],
+              ["Kricketot", "Bug", "None"],
+              ["Shinx", "Electric", "None"]]
+}
