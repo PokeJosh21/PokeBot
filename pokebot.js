@@ -41,7 +41,7 @@ client.on("message", async (message) => {
 
 	const userTeam = "userTeam/" + sender.id + ".txt";
         const userInventory = "userInventory/" + sender.id + ".txt";
-        const user = "userInventory/" + sender.id + ".txt";
+        const user = "user/" + sender.id + ".txt";
 
 	// Reply Messages
 	
@@ -72,6 +72,7 @@ client.on("message", async (message) => {
 			"/reset -> Resets a players user\n" +
 			"/starter [Fire/Water/Grass] -> Selects your starter\n" +
 			"/chart -> Returns the pokemon move chart\n" +
+			"/route [201-230] -> Moves you to the selected route\n" +
                         "/catch -> Trys to catch the pokemon you are in battle with\n" +
 			"/team show -> Shows the user's team\n" + 
 			"/team add [Pokemon] -> Adds the given pokemon to the user's team\n" +
@@ -92,100 +93,118 @@ client.on("message", async (message) => {
 				console.log("Help Command - Error: " + error);
 			}
 			break;
-		case "reset":
-			fs.exists(userTeam, function (exists) {
-				if (exists) {
-					fs.unlink(userTeam, function (err) {});
-				}
-			});
-
-			fs.exists(userInventory, function (exists) {
-                                if (exists) {
-                                        fs.unlink(userInventory, function (err) {});
-                                }
-                        });
-
-			fs.exists(user, function (exists) {
-                                if (exists) {
-                                        fs.unlink(user, function (err) {});
-                                }
-                        });
-
+		case "reset":	
+			reset(userTeam, userInventory, user);
 			channel.send(sender.username + " has been reset!");
 			console.log("User Reset: " + sender.username);
 
 			break;
-		case "starter":
+		case "route":
 			if (!args[0]) {
-				invFormat.setTitle("Starter Error");
+                                invFormat.setTitle("Route Error");
+                                invFormat.setDescription("Please pick a valid route\n" +
+                                                         "Usage /route [201-230]");
+                                channel.send(invFormat);
+                                console.log("Route Command - No Route Given");
+                                return;
+                        }
+
+			fs.exists("Routes/" + args[0] + ".txt", function(exists) {
+				if (exists) {
+					fs.exists(user, function (exists2) {
+						if (exists) {
+							fs.writeFile(user, args[0], function (err, data) {
+								channel.send("Your route has changed to " + args[0]);
+							});
+						} else {
+							invFormat.setTitle("Route Error");
+			                                invFormat.setDescription("Please pick a starter: Fire (Chimchar), Grass (Turtwig), Water (Piplup)\n" +
+                        			                                 "Usage /starter [Fire/Water/Grass]");
+			                                channel.send(invFormat);
+                        			        console.log("Route Command - No Starter Selected");
+						}
+					});
+				} else {
+					channel.send("Invalid Route");
+				}
+			});
+			break;
+		case "starter":
+			 if (!args[0]) {
+                                invFormat.setTitle("Starter Error");
                                 invFormat.setDescription("Please pick a starter: Fire (Chimchar), Grass (Turtwig), Water (Piplup)\n" +
                                                          "Usage /starter [Fire/Water/Grass]");
                                 channel.send(invFormat);
                                 console.log("Starter Command - No Starter Selected");
-				return;
-			}
+                                return;
+                        }
 
 			selection = args[0].toLowerCase();
+			var result = "";
 
 			fs.exists(userTeam, function (exists) {
-				if (exists) {
-					channel.send("You have already gotten your starter");
-					console.log("Starter Command - Starter Already Claimed" + " - User: " + sender.username);
-					return
-				} else {
+				if (!exists) { 
 					switch (selection) {
 						case "fire":
-							fs.writeFile(userTeam, "Chimchar", function (err, data) {
+							fs.writeFile(userTeam, "Chimchar" + os.EOL, function (err, data) {
 								caught.setDescription(sender.username + " chose Chimchar!");
-								gif = "http://play.pokemonshowdown.com/sprites/xyani/chimchar.gif";
+			                                        gif = "http://play.pokemonshowdown.com/sprites/xyani/chimchar.gif";
 								caught.setImage(gif);
-
 								channel.send(caught);
-
-								console.log(sender.username + " team file created");
-        	                                                console.log("Starter Command - Success" + " - User: " + sender.username);
-	                                                        console.log(" - Pokemon: " + "Chimchar");
+								console.log("Starter Command - Success" + " - User: " + sender.username);
+			                		        console.log(" - Pokemon: Chimchar");
 							});	
 							break;
 						case "grass":
-                                                        fs.writeFile(userTeam, "Turtwig", function (err, data) {
+							fs.writeFile(userTeam, "Turtwig" + os.EOL, function (err, data) {
 								caught.setDescription(sender.username + " chose Turtwig!");
-								gif = "http://play.pokemonshowdown.com/sprites/xyani/turtwig.gif"; 
+                        			                gif = "http://play.pokemonshowdown.com/sprites/xyani/turtwig.gif";
 								caught.setImage(gif);
-
-                                       	                        channel.send(caught);
-
-                               	                                console.log("Starter Command - Starter Gotten" + " - User: " + sender.username);
-                       	                                        console.log(" - Pokemon: " + "Turtwig");
-                                                	});
+								channel.send(caught);
+								console.log("Starter Command - Success" + " - User: " + sender.username);
+                                                                console.log(" - Pokemon: Turtwig");
+                        			       	});
 							break;
 						case "water":
-                               	                        fs.writeFile(userTeam, "Piplup", function (err, data) {
+  		                		        fs.writeFile(userTeam, "Piplup" + os.EOL, function (err, data) {
 								caught.setDescription(sender.username + " chose Piplup!");
-								gif = "http://play.pokemonshowdown.com/sprites/xyani/piplup.gif";
+			                                        gif = "http://play.pokemonshowdown.com/sprites/xyani/piplup.gif";
 								caught.setImage(gif);
-
-	                                                        channel.send(caught);	
-
-        	                                               	console.log("Starter Command - Starter Gotten" + " - User: " + sender.username);
-								console.log(" - Pokemon: " + "Piplup");
+								channel.send(caught);
+								console.log("Starter Command - Success" + " - User: " + sender.username);
+                                                                console.log(" - Pokemon: Piplup");
 							});
 							break;
 						default:
+
+							console.log("Starter Command - No Starter Selected" + " - User: " + sender.username);
 							invFormat.setTitle("Starter Error");
-							invFormat.setDescription("Please pick a starter: Fire (Chimchar), Grass (Turtwig), Water (Piplup)\n" +
-								     		 "Usage /starter [Fire/Water/Grass]");
-							channel.send(invFormat);
-							console.log("Starter Command - No Starter Selected");
+	        	               	                invFormat.setDescription("Please pick a starter: Fire (Chimchar), Grass (Turtwig), Water (Piplup)\n" +
+			                                                         "Usage /starter [Fire/Water/Grass]");
+                        		                channel.send(invFormat);
+							return;
 							break;
 					}
-					fs.writeFile(userInventory, "", function (err, data) {
-        	                                console.log(sender.username + " inventory file created");
-	                                });
-	
-        	                        fs.writeFile(user, "", function (err, data) {
-                	                        console.log(sender.username + " user file created");
-                        	        });
+		
+		                        console.log(sender.username + " Inventory File Created\n" +
+                               	   	            " - File Name: " + userTeam);
+
+                		        fs.writeFile(userInventory, "", function (err, data) {
+		                                console.log(sender.username + " Inventory File Created\n" +
+                                		                   " - File Name: " + userInventory);
+                		        });
+		
+		                        fs.writeFile(user, "201", function (err, data) {
+                                		console.log(sender.username + " File Created\n" +
+                		                            " - File Name: " + user);
+		                        });
+				} else {
+					console.log("Starter Command - Starter Already Claimed" + " - User: " + sender.username);
+					invFormat.setTitle("Starter Error");
+                	                invFormat.setDescription("You have already claimed your starter");
+        	                        channel.send(invFormat);
+	                                console.log("Starter Command - No Starter Selected");
+					return;
 				}
 			});
 			break;
@@ -203,25 +222,44 @@ client.on("message", async (message) => {
 			// PRE: User has a text file
 			// POST: Caught pokemon added to file
 			
-			number = 3;
-			pokemonNum = Math.floor(Math.random() * (number));
-			var pokemon = poke.mon[pokemonNum];
-			gif = "http://play.pokemonshowdown.com/sprites/xyani/" + pokemon[0].toLowerCase() + ".gif";
+			//Route pokemon total = number
 
-			caught.setImage(gif);
-			caught.setDescription(sender.username + " caught a " + pokemon[0] + "!");
-
-			fileName = "userInventory/" + sender.id + ".txt";
-
-			fs.exists(fileName, function (exists) {
+			fs.exists(user, function (exists) {
 				if(exists){
-					channel.send(caught);
-                		        fs.appendFile(fileName, pokemon[0] + os.EOL, function (err) {
-		                                if (err) throw err;
-                                		console.log("Catch Command - Pokemon Added" + " - User: " + sender.username);
-                		                console.log(" - File Name: " + fileName);
-		                                console.log(" - Pokemon: " + pokemon[0]);
-                        		});
+					fs.readFile(user, 'utf8', function(err, data) {
+						if (err) throw errl
+                	        		fs.readFile("Routes/" + data + ".txt", 'utf8', function(err2, data2) {
+							if (err2) throw err2;
+
+							var pokemon = data2.split("\r\n");
+
+							number = pokemon.length;
+	                	                        pokemonNum = Math.floor(Math.random() * (number));
+
+        	        	                        gif = "http://play.pokemonshowdown.com/sprites/xyani/" + pokemon[pokemonNum].toLowerCase() + ".gif";
+
+	                        	                caught.setImage(gif);
+                                	        	caught.setDescription(sender.username + " caught a " + pokemon[pokemonNum] + "!");
+
+                                        		channel.send(caught);
+							
+							fs.readFile(userTeam, 'utf8', function(err3, data3) {
+								if (err3) throw err3;
+
+								var team = data3.split("\r\n");
+								var loc = userTeam
+								if (team.length > 6) {
+									loc = userInventory;
+								}
+
+								fs.appendFile(loc, pokemon[pokemonNum] + os.EOL, function (err) {
+        	        		                                if (err) throw err;
+                			                                console.log("Catch Command - Pokemon Added" + " - User: " + sender.username);
+        		                	                        console.log(" - Pokemon: " + pokemon[pokemonNum]);
+		                                	        });
+							});
+						});
+		                        });
 					return;
 				} else {
 					channel.send("You dont have your starter yet!");
@@ -263,5 +301,77 @@ client.on("message", async (message) => {
 			break;
 	}		
 });
+
+
+// Function to delete the data about a user
+function reset(userTeam, userInventory, user) {
+	fs.exists(userTeam, function (exists) {
+		if (exists) {
+			fs.unlink(userTeam, function (err) {});
+		}
+	});
+
+	fs.exists(userInventory, function (exists) {
+		if (exists) {
+			fs.unlink(userInventory, function (err) {});
+		}
+	});
+
+	fs.exists(user, function (exists) {
+		if (exists) {
+			fs.unlink(user, function (err) {});
+		}
+	});
+}
+
+// Function which returns which starter pokemon the user chose
+function starter(selection, userTeam, userInventory, user, name) {
+	result = "none"
+	fs.exists(userTeam, function (exists) {
+		if (!exists) { 
+			console.log("MOO#");
+			switch (selection) {
+				case "fire":
+					fs.writeFile(userTeam, "Chimchar", function (err, data) {
+						result = "Chimchar";
+					});	
+					break;
+				case "grass":
+					fs.writeFile(userTeam, "Turtwig", function (err, data) {
+						result = "Turtwig";
+                        	       	});
+					break;
+				case "water":
+  		                        fs.writeFile(userTeam, "Piplup", function (err, data) {
+						result = "Piplup";
+					});
+					break;
+				default:
+					console.log("Starter Command - No Starter Selected");
+					return "none";
+					break;
+			}
+			
+			console.log(name + " team file created");
+	                console.log("Starter Command - Success" + " - User: " + name);
+		        console.log(" - Pokemon: " + result);
+			
+			console.log(name + " Inventory File Created\n" + 
+				    	   " - File Name: " + userTeam);
+			
+			fs.writeFile(userInventory, "", function (err, data) {
+				console.log(name + " Inventory File Created\n" + 
+					    	   " - File Name: " + userInventory);
+			});
+
+			fs.writeFile(user, "201", function (err, data) {
+				console.log(name + " Inventory File Created\n" + 
+						   " - File Name: " + user);
+			});
+		}
+	});
+	console.log(result + " MOOOOOOO");
+	return result;
+}
 
 client.login(auth.token);
